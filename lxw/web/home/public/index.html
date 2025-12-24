@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Pop Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: monospace;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        #music-title {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            color: white;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.8rem 1.2rem;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 隐藏音频元素 */
+        audio {
+            display: none;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(28, 26, 28, 0.8);
+            padding: 1em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+        }
+
+        .nav-item {
+            border: none;
+            border-radius: 3em;
+            padding: 0.5em 1.5em;
+            background: #1C1A1C;
+            color: #AAAAAA;
+            font-weight: 600;
+            font-size: medium;
+            cursor: pointer;
+            transition: all 450ms ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item:hover {
+            background: linear-gradient(0deg, #A47CF3, #683FEA);
+            box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+                inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+                0px 0px 0px 4px rgba(255, 255, 255, 0.2),
+                0px 0px 180px 0px #9917FF;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .nav-item svg {
+            fill: #AAAAAA;
+            transition: all 800ms ease;
+        }
+
+        .nav-item:hover svg {
+            fill: white;
+            transform: scale(1.2);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.5em;
+            }
+            
+            .nav-links {
+                gap: 0.5rem;
+            }
+            
+            .nav-item {
+                padding: 0.4em 1em;
+                font-size: small;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 视频背景 -->
+    <video id="video-background" autoplay muted loop playsinline></video>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">
+                <button class="nav-item">
+                    <svg height="24" width="24" viewBox="0 0 24 24" class="sparkle">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+                    </svg>
+                    <span>首页</span>
+                </button>
+            </a>
+            <a href="../../scr/lits/lits.html" class="nav-link">
+                <button class="nav-item">
+                    <svg height="24" width="24" viewBox="0 0 24 24" class="sparkle">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+                    </svg>
+                    <span>网页目录</span>
+                </button>
+            </a>
+            <a href="../../scr/service/service.html" class="nav-link">
+                <button class="nav-item">
+                    <svg height="24" width="24" viewBox="0 0 24 24" class="sparkle">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+                    </svg>
+                    <span>服务</span>
+                </button>
+            </a>
+            <a href="#" class="nav-link">
+                <button class="nav-item">
+                    <svg height="24" width="24" viewBox="0 0 24 24" class="sparkle">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+                    </svg>
+                    <span>其他功能</span>
+                </button>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 音乐标题 -->
+    <div id="music-title">Loading...</div>
+    
+    <!-- 音频元素 -->
+    <audio id="audio-player" preload="auto"></audio>
+
+    <script>
+        // 音乐播放列表
+        const playlist = [
+            { title: "愛はいつも (Love is Always)", file: "music/love_is_always.mp3" },
+            { title: "The two of them continue their feelings from the past", file: "music/feelings_from_past.mp3" },
+            { title: "3 am West End", file: "music/3am_west_end.mp3" }
+        ];
+
+        let currentTrack = 0;
+        const audioPlayer = document.getElementById('audio-player');
+        const musicTitle = document.getElementById('music-title');
+        const videoBackground = document.getElementById('video-background');
+
+        // 设置视频背景 - 修复路径
+        videoBackground.src = '../videos/coastal_sunset_highway.mp4';
+
+        // 加载并播放音乐
+        function loadTrack(index) {
+            currentTrack = index % playlist.length;
+            const track = playlist[currentTrack];
+            
+            audioPlayer.src = track.file;
+            musicTitle.textContent = track.title;
+            
+            // 加载完成后播放
+            audioPlayer.load();
+        }
+
+        // 播放下一首
+        function playNext() {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            loadTrack(currentTrack);
+            audioPlayer.play().catch(err => console.log('播放失败:', err));
+        }
+
+        // 监听音乐结束事件
+        audioPlayer.addEventListener('ended', playNext);
+
+        // 监听音频可以播放时自动播放
+        audioPlayer.addEventListener('canplay', () => {
+            audioPlayer.play().catch(err => console.log('自动播放失败:', err));
+        });
+
+        // 初始化：加载第一首歌
+        loadTrack(0);
+
+        // 用户首次交互后开始播放（处理浏览器自动播放限制）
+        const startPlayback = () => {
+            audioPlayer.play().catch(err => {
+                console.log('需要用户交互才能播放');
+            });
+            videoBackground.play().catch(err => {
+                console.log('视频播放失败:', err);
+            });
+            
+            // 移除监听器
+            document.removeEventListener('click', startPlayback);
+            document.removeEventListener('touchstart', startPlayback);
+            document.removeEventListener('keydown', startPlayback);
+        };
+
+        // 添加多种交互监听
+        document.addEventListener('click', startPlayback);
+        document.addEventListener('touchstart', startPlayback);
+        document.addEventListener('keydown', startPlayback);
+
+        // 尝试自动播放
+        window.addEventListener('load', () => {
+            audioPlayer.play().then(() => {
+                console.log('自动播放成功');
+            }).catch(err => {
+                console.log('需要用户交互才能自动播放');
+                musicTitle.textContent = playlist[0].title + ' (Click to play)';
+            });
+        });
+    </script>
+</body>
+</html>
