@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026新年倒计时与祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .timer-container {
+            text-align: center;
+            padding: 30px;
+            width: 90%;
+            max-width: 900px;
+            z-index: 50;
+            transition: opacity 1.5s ease;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        /* 新增：距离2026提示文字 */
+        .countdown-prompt {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #f0f0f0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            letter-spacing: 1.5px;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-number {
+            font-size: 5em;
+            font-weight: 800;
+            color: #fff;
+            padding: 20px 25px;
+            border-radius: 15px;
+            min-width: 120px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .countdown-label {
+            margin-top: 15px;
+            font-size: 1.5em;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* 祝福展示区域 */
+        .blessings-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 40;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        .blessing-word {
+            position: absolute;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            padding: 12px 18px;
+            background-color: rgba(0, 0, 0, 0.95);
+            border-radius: 8px;
+            opacity: 0;
+            white-space: nowrap;
+            transition: opacity 1s ease-out, transform 0.5s ease;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 45;
+        }
+
+        .blessing-phrase {
+            position: absolute;
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            padding: 15px 22px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            opacity: 0;
+            max-width: 400px;
+            line-height: 1.6;
+            transition: opacity 2s ease-out, transform 0.5s ease;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 50;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .timer-container {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .countdown-prompt {
+                font-size: 1.4em;
+                margin-bottom: 15px;
+            }
+            
+            .countdown {
+                gap: 10px;
+            }
+            
+            .countdown-number {
+                font-size: 3.2em;
+                padding: 15px;
+                min-width: 80px;
+            }
+            
+            .countdown-label {
+                font-size: 1em;
+                margin-top: 8px;
+            }
+            
+            .blessing-word {
+                font-size: 22px;
+                padding: 10px 15px;
+            }
+            
+            .blessing-phrase {
+                font-size: 20px;
+                padding: 12px 18px;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .countdown-prompt {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            }
+            
+            .countdown-number {
+                font-size: 2.5em;
+                padding: 12px;
+                min-width: 70px;
+            }
+            
+            .countdown-label {
+                font-size: 0.9em;
+            }
+            
+            .blessing-word {
+                font-size: 20px;
+            }
+            
+            .blessing-phrase {
+                font-size: 18px;
+                max-width: 250px;
+            }
+        }
+
+        /* 新年快乐标题 */
+        .new-year-title {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            z-index: 60;
+            transition: opacity 1.5s ease;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .new-year-title {
+                font-size: 3em;
+            }
+        }
+
+        /* 计时器淡化后的样式 */
+        .timer-container.faded {
+            opacity: 0.1;
+        }
+
+        /* 祝福文字淡出样式 */
+        .fade-out {
+            opacity: 0 !important;
+            transition: opacity 0.5s ease !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container" id="timerContainer">
+        <h1>🎉 迈向2026 🎉</h1>
+        <!-- 这里就是添加的提示文字 -->
+        <div class="countdown-prompt">距离2026年1月1日零点还有</div>
+        
+        <div class="countdown">
+            <div class="countdown-item">
+                <div class="countdown-number" id="days">00</div>
+                <div class="countdown-label">天</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="hours">00</div>
+                <div class="countdown-label">时</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="minutes">00</div>
+                <div class="countdown-label">分</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="seconds">00</div>
+                <div class="countdown-label">秒</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新年快乐标题 -->
+    <div class="new-year-title" id="newYearTitle">🎊 2026新年快乐！ 🎊</div>
+
+    <!-- 祝福展示容器 -->
+    <div class="blessings-container" id="blessingsContainer"></div>
+
+    <script>
+        // 倒计时功能
+        const targetDate = new Date('2026-01-01T00:00:00').getTime();
+        let newYearReached = false;
+        let blessingWordsActive = false;
+        let blessingPhrasesActive = false;
+        let blessingWordsInterval = null;
+        let blessingPhrasesInterval = null;
+        let allBlessingElements = []; // 跟踪所有祝福元素
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = targetDate - now;
+
+            if (timeLeft < 0) {
+                // 如果已经到了2026年
+                if (!newYearReached) {
+                    newYearReached = true;
+                    startBlessingsSequence();
+                }
+                
+                // 显示00:00:00:00
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                
+                return;
+            }
+
+            // 计算剩余时间
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            // 更新显示
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        // 祝福关键词数据
+        const blessingWords = [
+            "突破", "成长", "焕新", "丰盛", "绽放", "蜕变", "进阶", "精进", "丰收", "超越",
+            "腾飞", "高升", "辽阔", "驰骋", "抵达", "自在", "安然", "澄澈", "明媚", "从容",
+            "坦荡", "欢喜", "轻盈", "热忱", "无畏", "坚定", "豁达", "宁静", "悠然", "丰盈",
+            "顺遂", "安康", "甜蜜", "美满", "兴旺", "富足", "团圆", "和乐", "温暖", "惊喜",
+            "精彩", "闪耀", "康宁", "祥瑞", "如愿", "启程", "乘风", "破浪", "启航", "扬帆",
+            "摘星", "璀璨", "通达", "圆满", "亨通", "鹏程", "锦绣", "鸿运", "可期", "喜乐",
+            "新生", "蓬勃", "活力", "朝气", "昂扬", "奋发", "进取", "创新", "开拓", "探索",
+            "智慧", "勇气", "力量", "希望", "梦想", "信念", "坚持", "执着", "追求", "实现",
+            "和谐", "美满", "幸福", "安康", "吉祥", "如意", "顺利", "成功", "辉煌", "荣耀"
+        ];
+
+        // 祝福短语数据
+        const blessingPhrases = [
+            "愿每一天都奔向热爱，每一步都踏响精彩。",
+            "前方风景正好，愿你步履不停，与所有美好相遇。",
+            "去探索，去热爱，去发光，让新的一年写满你的传奇。",
+            "愿你心中有光，脚下有路，未来有无限晴朗。",
+            "保持那份纯粹与好奇，生活自会回馈你万千惊喜。",
+            "愿你接下来的日子，烟火向星辰，所愿皆成真。",
+            "新的篇章已开启，愿你落笔生花，一路繁华。",
+            "愿温暖常伴左右，日子常安常乐，未来常怀期待。",
+            "愿你乘风破浪，满载而归，故事里全是成长与明媚。",
+            "拥抱每一个崭新的日出，让生活充满朝阳般的希望。",
+            "愿你的旅途星辰为伴，前路宽广，灯火通明。",
+            "勇敢地去追梦吧，整个世界都会为你让路。",
+            "愿你眼中有星光，笑容里是坦荡，活成自己最喜欢的模样。",
+            "愿生活温柔以待，赠你满怀的欢笑与丰盈的爱。",
+            "去创造，去经历，愿你拥有不设限的精彩人生。",
+            "愿日子常暖，惊喜不断，幸福始终环绕在你身边。",
+            "心怀山海，脚踏实地，你的未来必定光芒万丈。",
+            "愿所有努力都不被辜负，所有奔赴都意义非凡。",
+            "愿你遍历山河，仍觉人间值得；历经千帆，归来笑容依然。",
+            "用热爱照亮前路，让新的一年成为你生命中的华彩乐章。",
+            "愿你的世界永远开阔，永远有发现美好的眼睛。",
+            "步履轻盈地前行吧，好运和惊喜正在下一站等你。",
+            "愿你活得尽兴且从容，所遇皆温暖，所得皆所想。",
+            "新的一年，愿你与自己和解，与世界温柔相处。",
+            "愿你的勇气披荆斩棘，你的坚持终将抵达繁星。",
+            "把日子过成诗，把生活谱成歌，愿你每一天都悦耳动听。",
+            "愿你心怀炽热，无惧岁月漫长，永远走在向上的路上。",
+            "愿每一天都充满小确幸，每一年都奔赴大圆满。",
+            "愿你成为自己的太阳，无需借谁的光，便能照亮前方。",
+            "生活明朗，万物可爱，愿你的人间永远值得。",
+            "愿你拥有不期而遇的温暖，和生生不息的希望。",
+            "带着笑容出发吧，未来定会给你最热烈的拥抱。",
+            "愿你既能仰望星空，也能脚踏实地，收获稳稳的幸福。",
+            "愿时光能缓，故人不散；愿岁月静好，初心不忘。",
+            "大胆地往前走，你的坚持终将成就独一无二的风景。",
+            "愿你被世界温柔宠爱，也对世界报以慷慨热爱。",
+            "未来的每一天，都愿你比昨天更自由，比过去更开阔。",
+            "愿你心中藏有桃花源，何处皆是水云间。",
+            "去爱，去梦，去闯荡，愿你拥有无憾的滚烫时光。",
+            "愿生活如你所盼，未来如你所愿，一切皆有可能。",
+            "愿你遍历岁月山河，内心依然清澈鲜活。",
+            "把每一天都活得热气腾腾，不负时光，不负自己。",
+            "愿你前路皆坦荡，万事皆可期，笑容常绽放。",
+            "愿你所求皆如愿，所行化坦途，多喜乐，长安宁。",
+            "保持热爱，奔赴山海，成为自己生命里的那束光。",
+            "愿你与世界交手的这些年，依然充满新鲜，兴致盎然。",
+            "愿每一天的开始，都带着全新的希望与无尽的可能。",
+            "愿你桥都坚固，隧道都光明，沿途皆是美景。",
+            "生活不是等待风暴过去，而是学会在雨中起舞。愿你是那位舞者。",
+            "愿你以梦为马，骋望天涯；以心为灯，照亮前程。新年快乐！",
+            "新的一年，愿你有家可回，有人可依，有梦可追。",
+            "愿你的2026，充满阳光、欢笑和无限可能。",
+            "让过去成为序章，让未来充满希望，2026年快乐！",
+            "愿新年带给你宁静、快乐和满满的成就感。",
+            "新的一年，愿你的每一天都充满意义和满足。",
+            "愿2026年的你，比2025年更快乐、更健康、更成功。",
+            "愿新年的钟声为你带来平安、喜乐和繁荣。",
+            "新的一年，愿你梦想成真，心愿达成，快乐无限。",
+            "愿2026年的每一天，都像星光一样璀璨明亮。",
+            "新的一年，愿你与美好不期而遇，与幸福长相厮守。"
+        ];
+
+        // 检查元素是否重叠
+        function checkOverlap(element1, element2) {
+            const rect1 = element1.getBoundingClientRect();
+            const rect2 = element2.getBoundingClientRect();
+            
+            return !(
+                rect1.right < rect2.left || 
+                rect1.left > rect2.right || 
+                rect1.bottom < rect2.top || 
+                rect1.top > rect2.bottom
+            );
+        }
+
+        // 检查新元素与现有元素的冲突
+        function checkAndFadeOverlappingElements(newElement, existingElements) {
+            for (let i = existingElements.length - 1; i >= 0; i--) {
+                const existingElement = existingElements[i];
+                
+                if (existingElement !== newElement && checkOverlap(newElement, existingElement)) {
+                    // 添加淡出效果
+                    existingElement.classList.add('fade-out');
+                    
+                    // 淡出后移除元素
+                    setTimeout(() => {
+                        if (existingElement.parentNode) {
+                            existingElement.parentNode.removeChild(existingElement);
+                            
+                            // 从数组中移除
+                            const index = allBlessingElements.indexOf(existingElement);
+                            if (index > -1) {
+                                allBlessingElements.splice(index, 1);
+                            }
+                        }
+                    }, 500);
+                }
+            }
+        }
+
+        // 创建祝福关键词元素
+        function createBlessingWordElement(text) {
+            const word = document.createElement('div');
+            word.className = 'blessing-word';
+            word.textContent = text;
+            
+            // 随机位置
+            const posX = Math.random() * 85;
+            const posY = Math.random() * 85;
+            
+            word.style.left = `${posX}%`;
+            word.style.top = `${posY}%`;
+            
+            // 随机字体大小（28-40px）
+            const fontSize = 28 + Math.random() * 12;
+            word.style.fontSize = `${fontSize}px`;
+            
+            // 随机旋转角度（-20到20度）
+            const rotation = -20 + Math.random() * 40;
+            word.style.transform = `rotate(${rotation}deg)`;
+            
+            // 随机缩放（1.0-1.3倍）
+            const scale = 1.0 + Math.random() * 0.3;
+            word.style.transform += ` scale(${scale})`;
+            
+            return word;
+        }
+
+        // 创建祝福短语元素
+        function createBlessingPhraseElement(text) {
+            const phrase = document.createElement('div');
+            phrase.className = 'blessing-phrase';
+            phrase.textContent = text;
+            
+            // 随机位置（避开边缘区域）
+            const posX = 10 + Math.random() * 80;
+            const posY = 10 + Math.random() * 80;
+            
+            phrase.style.left = `${posX}%`;
+            phrase.style.top = `${posY}%`;
+            
+            // 随机字体大小（24-32px）
+            const fontSize = 24 + Math.random() * 8;
+            phrase.style.fontSize = `${fontSize}px`;
+            
+            // 随机缩放（1.0-1.4倍）
+            const scale = 1.0 + Math.random() * 0.4;
+            phrase.style.transform = `scale(${scale})`;
+            
+            return phrase;
+        }
+
+        // 开始祝福关键词显示
+        function startBlessingWords() {
+            blessingWordsActive = true;
+            const container = document.getElementById('blessingsContainer');
+            
+            // 快速显示祝福关键词 - 每200毫秒显示一个
+            blessingWordsInterval = setInterval(() => {
+                if (!blessingWordsActive) return;
+                
+                // 随机选择祝福关键词
+                const randomIndex = Math.floor(Math.random() * blessingWords.length);
+                const blessingText = blessingWords[randomIndex];
+                
+                // 创建元素
+                const wordElement = createBlessingWordElement(blessingText);
+                
+                // 添加到容器
+                container.appendChild(wordElement);
+                allBlessingElements.push(wordElement);
+                
+                // 检查并淡化重叠的元素
+                checkAndFadeOverlappingElements(wordElement, allBlessingElements);
+                
+                // 延迟显示
+                setTimeout(() => {
+                    wordElement.style.opacity = '0.95';
+                    
+                    // 5-8秒后淡出
+                    setTimeout(() => {
+                        if (wordElement.parentNode) {
+                            wordElement.classList.add('fade-out');
+                            
+                            setTimeout(() => {
+                                if (wordElement.parentNode) {
+                                    wordElement.parentNode.removeChild(wordElement);
+                                    
+                                    // 从数组中移除
+                                    const index = allBlessingElements.indexOf(wordElement);
+                                    if (index > -1) {
+                                        allBlessingElements.splice(index, 1);
+                                    }
+                                }
+                            }, 500);
+                        }
+                    }, 5000 + Math.random() * 3000);
+                }, 50);
+            }, 200); // 每200毫秒显示一个祝福词
+        }
+
+        // 开始祝福短语显示
+        function startBlessingPhrases() {
+            blessingPhrasesActive = true;
+            const container = document.getElementById('blessingsContainer');
+            
+            // 停止祝福关键词显示
+            blessingWordsActive = false;
+            clearInterval(blessingWordsInterval);
+            
+            // 清除所有祝福关键词
+            setTimeout(() => {
+                const words = container.querySelectorAll('.blessing-word');
+                words.forEach(word => {
+                    word.classList.add('fade-out');
+                    
+                    setTimeout(() => {
+                        if (word.parentNode) {
+                            word.parentNode.removeChild(word);
+                        }
+                    }, 500);
+                });
+                
+                // 从数组中移除所有祝福关键词
+                allBlessingElements = allBlessingElements.filter(el => !el.classList.contains('blessing-word'));
+                
+                // 开始显示祝福短语 - 每1秒显示一个
+                blessingPhrasesInterval = setInterval(() => {
+                    if (!blessingPhrasesActive) return;
+                    
+                    // 随机选择祝福短语
+                    const randomIndex = Math.floor(Math.random() * blessingPhrases.length);
+                    const blessingText = blessingPhrases[randomIndex];
+                    
+                    // 创建元素
+                    const phraseElement = createBlessingPhraseElement(blessingText);
+                    
+                    // 添加到容器
+                    container.appendChild(phraseElement);
+                    allBlessingElements.push(phraseElement);
+                    
+                    // 检查并淡化重叠的元素
+                    checkAndFadeOverlappingElements(phraseElement, allBlessingElements);
+                    
+                    // 延迟显示
+                    setTimeout(() => {
+                        phraseElement.style.opacity = '0.97';
+                        
+                        // 8-12秒后淡出
+                        setTimeout(() => {
+                            if (phraseElement.parentNode) {
+                                phraseElement.classList.add('fade-out');
+                                
+                                setTimeout(() => {
+                                    if (phraseElement.parentNode) {
+                                        phraseElement.parentNode.removeChild(phraseElement);
+                                        
+                                        // 从数组中移除
+                                        const index = allBlessingElements.indexOf(phraseElement);
+                                        if (index > -1) {
+                                            allBlessingElements.splice(index, 1);
+                                        }
+                                    }
+                                }, 500);
+                            }
+                        }, 8000 + Math.random() * 4000);
+                    }, 50);
+                }, 1000); // 每1秒显示一个祝福语
+            }, 1000);
+        }
+
+        // 开始祝福展示序列
+        function startBlessingsSequence() {
+            // 显示新年快乐标题
+            const newYearTitle = document.getElementById('newYearTitle');
+            newYearTitle.style.opacity = '1';
+            
+            // 淡化计时器
+            const timerContainer = document.getElementById('timerContainer');
+            timerContainer.classList.add('faded');
+            
+            // 显示祝福容器
+            const blessingsContainer = document.getElementById('blessingsContainer');
+            blessingsContainer.style.opacity = '1';
+            
+            // 立即开始显示祝福关键词
+            startBlessingWords();
+            
+            // 10秒后开始显示祝福短语
+            setTimeout(() => {
+                startBlessingPhrases();
+            }, 10000);
+        }
+
+        // 监听空格键提前触发祝福
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space' && !newYearReached) {
+                event.preventDefault();
+                newYearReached = true;
+                startBlessingsSequence();
+            }
+        });
+
+        // 添加鼠标点击事件也可以触发祝福（移动设备友好）
+        document.addEventListener('click', function(event) {
+            if (!newYearReached) {
+                // 检查点击位置不是倒计时数字
+                if (!event.target.classList.contains('countdown-number')) {
+                    newYearReached = true;
+                    startBlessingsSequence();
+                }
+            }
+        });
+
+        // 每秒更新一次倒计时
+        setInterval(updateCountdown, 1000);
+        // 初始化倒计时
+        updateCountdown();
+    </script>
+</body>
+</html>
